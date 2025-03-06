@@ -38,7 +38,6 @@ exparameters = [
     "--prop:/sim/rendering/draw-mask/terrain=true",
     "--disable-random-vegetation",
     "--disable-random-buildings",
-    "--disable-rembrandt",
     "--disable-horizon-effect"
 ]
 
@@ -49,6 +48,7 @@ if len(sys.argv)!=3:
 
 filename=sys.argv[1]
 px4id=int(sys.argv[2])
+print("px4id", px4id)
 
 if not os.path.exists('./'+filename):
     print('FG_run.py -- file not found: '+filename)
@@ -60,11 +60,14 @@ if fgbin is None:
     fgbin='fgfs'
 
 #pick fgroot (fgdata) from flightgear
-fgroot=""
-fghelp=subprocess.check_output([fgbin, '--version']).decode("utf-8").split('\n');
-for s in fghelp:
-    if s.find("FG_ROOT")>=0:
-        fgroot=s.split('=')[1]
+fgroot=os.getenv("PX4_FG_ROOT")
+if fgroot is None:
+    fghelp=subprocess.check_output([fgbin, '--version']).decode("utf-8").split('\n');
+    for s in fghelp:
+        if s.find("FG_ROOT")>=0:
+            fgroot=s.split('=')[1]
+
+fgroot_program = os.getenv("PX4_FG_ROOT_WINDOWS")
 
 if not fgroot:
     print('fgroot not found.. abort')
@@ -89,7 +92,7 @@ if fgargsadd is None:
 
 protocols=fgroot+'/Protocol'
 if not os.access(protocols, os.W_OK):
-    print('Cannot Write into direcotry: '+ protocols)
+    print('Cannot Write into directory: '+ protocols)
     exit(-1)
 
 ############################ Parse Config ######################################
@@ -137,38 +140,41 @@ shutil.copy('px4bridge.xml',protocols+'/FGtoPX4.xml' )
 baseparameters = [
     "--aircraft=" + model,
     "--fg-aircraft=" + fgmodelsdir,
+    "--fg-root=" + fgroot_program,
     "--telnet="+str(15400+px4id),
     "--timeofday=noon",
-    "--generic=socket,out,100,127.0.0.1,"+str(15200+px4id)+",udp,FGtoPX4",
-    "--generic=socket,in,100,,"+str(15300+px4id)+",udp,PX4toFG",
+    # socket out needs to be set to the WSL address (> wsl hostname -I)
+    "--generic=socket,out,100,172.26.48.154,"+str(15200+px4id)+",udp,FGtoPX4",
+    # socket in needs to be set to the windows address within wsl ($ ip route | awk '/^default/{print $3}')
+    "--generic=socket,in,100,172.26.48.1,"+str(15300+px4id)+",udp,PX4toFG",
     "--model-hz=120",
-    "--disable-random-objects",
-    "--prop:/sim/rendering/texture-compression=off",
-    "--prop:/sim/rendering/quality-level=0",
-    "--prop:/sim/rendering/shaders/quality-level=0",
-    "--disable-ai-traffic",
-    "--prop:/sim/ai/enabled=0",
-    "--prop:/sim/rendering/random-vegetation=0",
-    "--prop:/sim/rendering/random-buildings=0",
-    "--disable-specular-highlight",
-    "--disable-ai-models",
-    "--disable-clouds",
-    "--disable-clouds3d",
-    "--fog-fastest",
-    "--visibility=2000",
-    "--model-hz=500",
-    "--disable-distance-attenuation",
-    "--disable-real-weather-fetch",
-    "--prop:/sim/rendering/particles=0",
-    "--prop:/sim/rendering/multi-sample-buffers=1",
-    "--prop:/sim/rendering/multi-samples=2",
-    "--prop:/sim/rendering/draw-mask/clouds=false",
-    "--prop:/sim/rendering/draw-mask/aircraft=true",
-    "--prop:/sim/rendering/draw-mask/models=true",
-    "--prop:/sim/rendering/draw-mask/terrain=true",
-    "--disable-random-vegetation",
-    "--disable-random-buildings",
-    "--disable-horizon-effect"
+    #"--disable-random-objects",
+    # "--prop:/sim/rendering/texture-compression=off",
+    # "--prop:/sim/rendering/quality-level=0",
+    # "--prop:/sim/rendering/shaders/quality-level=0",
+    #"--disable-ai-traffic",
+    # "--prop:/sim/ai/enabled=0",
+    # "--prop:/sim/rendering/random-vegetation=0",
+    # "--prop:/sim/rendering/random-buildings=0",
+    #"--disable-specular-highlight",
+    #"--disable-ai-models",
+    #"--disable-clouds",
+    # "--disable-clouds3d",
+    # "--fog-fastest",
+    #"--visibility=2000",
+    #"--model-hz=500",
+    # "--disable-distance-attenuation",
+    # "--disable-real-weather-fetch",
+    # "--prop:/sim/rendering/particles=0",
+    # "--prop:/sim/rendering/multi-sample-buffers=1",
+    # "--prop:/sim/rendering/multi-samples=2",
+    # "--prop:/sim/rendering/draw-mask/clouds=false",
+    # "--prop:/sim/rendering/draw-mask/aircraft=true",
+    # "--prop:/sim/rendering/draw-mask/models=true",
+    # "--prop:/sim/rendering/draw-mask/terrain=true",
+    # "--disable-random-vegetation",
+    # "--disable-random-buildings",
+    # "--disable-horizon-effect"
 ]
 
 #with FG output

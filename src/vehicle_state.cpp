@@ -94,7 +94,7 @@ void VehicleState::setFGData(const fgOutputData &fgData)
 	double freq = 1.0 / (fgData.elapsed_sec - lastTime);
 	lastTime = fgData.elapsed_sec;
 
-	if (freq < 20) {
+	if (freq < 10) {
 		std::cout << "FGBridge: Low FlightGear Update Freq: " << freq << std::endl;
 	}
 
@@ -151,6 +151,7 @@ mavlink_hil_sensor_t VehicleState::getSensorMsg(int offset_us)
 	sensor_msg.pressure_alt = pressure_alt + baro_alt_nois * standard_normal_distribution_(random_generator_);
 	sensor_msg.diff_pressure = diff_pressure + diff_pressure_nois * standard_normal_distribution_(random_generator_) ;
 	sensor_msg.fields_updated = (uint16_t)0x1FFF;
+        sensor_msg.id = 0;
 
     return sensor_msg;
 }

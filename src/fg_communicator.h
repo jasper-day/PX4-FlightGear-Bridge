@@ -45,7 +45,7 @@
 
 #include "vehicle_state.h"
 
-
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

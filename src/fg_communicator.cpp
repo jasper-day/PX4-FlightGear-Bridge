@@ -63,20 +63,31 @@ int FGCommunicator::Init(int portOffset)
 	memset((char *) &fg_addr_out, 0, sizeof(fg_addr_out));
 	memset((char *) &my_addr_out, 0, sizeof(my_addr_out));
 	my_addr_out.sin_family = AF_INET;
-	my_addr_out.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	//  socket out needs to be set to the WSL hostname (wsl hostname -I)
+	my_addr_out.sin_addr.s_addr = inet_addr("172.26.48.154");
+	// my_addr_out.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 	my_addr_out.sin_port = htons(FGOutPortBase+portOffset);
+	printf("my_addr_out = %i", FGOutPortBase + portOffset);
 
 	fgSockIn = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	memset((char *) &fg_addr_in, 0, sizeof(my_addr_out));
 	fg_addr_in.sin_family = AF_INET;
-	fg_addr_in.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	// socket in needs to be set to the Windows hostname within WSL (ip route | awk '/^default/{print $3}')
+	fg_addr_in.sin_addr.s_addr = inet_addr("172.26.48.1");
 	fg_addr_in.sin_port = htons(FGInPortBase+portOffset);
+	// receiving commands on
+	printf("fg_addr_in = %i", FGInPortBase + portOffset);
 
 	//bind socket to port
 	if (bind(fgSockOut, (struct sockaddr *) &my_addr_out, sizeof(my_addr_out)) == -1) {
 		printf("Cannot bind socket");
 		return -1;
 	}
+
+	// if (bind(fgSockIn, (struct sockaddr *) &fg_addr_in, sizeof(fg_addr_in)) == -1) {
+	// 	perror("Cannot bind input socket");
+	// 	return -1;
+	//     }
 
 	return 0;
 }
@@ -115,6 +126,7 @@ int FGCommunicator::Send()
 		printf("Error send packet");
 		return -1;
 	}
+
 
 	return 0;
 }

@@ -62,7 +62,7 @@ void termSignalHandler(int unused)
 
 void intSignalHandler(int unused)
 {
-   std::cerr<<"Bridge: Signal SIGINT recieve" <<std::endl; 
+   std::cerr<<"Bridge: Signal SIGINT recieve" <<std::endl;
 }
 
 void setup_unix_signals()
@@ -94,7 +94,7 @@ void setup_unix_signals()
 int main(int argc, char **argv)
 {
 	cerr << "I'm Mavlink to FlightGear Bridge" << endl;;
-    
+
 	int delay_us = 2000;
 	bool havePxData = false;
 	bool haveFGData = false;
@@ -109,6 +109,7 @@ int main(int argc, char **argv)
 	}
 
     int px4id = atoi(argv[1]);
+	cout << "px4id (bridge): " << px4id << endl;
 	int controlsCount = atoi(argv[2]);
 
 	int *contolsMap = new int[controlsCount];
@@ -142,7 +143,7 @@ int main(int argc, char **argv)
     setup_unix_signals();
     stop=0; //set from Signal handler
     int FgNonRecieveIters=0;
-	while (stop==0) 
+	while (stop==0)
     {
 
 		bool fgRecved = (fg.Recieve(false) == 1);
@@ -159,7 +160,7 @@ int main(int argc, char **argv)
 		if (fgRecved || (haveFGData && sendEveryStep)) {
 			px4.Send(FgNonRecieveIters*delay_us);
 		}
-        
+
         //useless
         //px4.CheckClientReconect();
 
