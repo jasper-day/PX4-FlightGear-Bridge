@@ -138,8 +138,8 @@ shutil.copy('px4bridge.xml',protocols+'/FGtoPX4.xml' )
 ############################ Run FG #############################################
 
 # get IP addresses
-windows_ip = os.getenv("PX4_HOST_IP")
-wsl_ip = os.getenv("PX4_CLIENT_IP")
+windows_ip = os.getenv("PX4_WINDOWS_IP")
+wsl_ip = os.getenv("PX4_WSL_IP")
 
 baseparameters = [
     "--aircraft=" + model,
