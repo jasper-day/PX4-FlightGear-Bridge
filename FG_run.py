@@ -137,6 +137,10 @@ shutil.copy('px4bridge.xml',protocols+'/FGtoPX4.xml' )
 
 ############################ Run FG #############################################
 
+# get IP addresses
+windows_ip = os.getenv("PX4_HOST_IP")
+wsl_ip = os.getenv("PX4_CLIENT_IP")
+
 baseparameters = [
     "--aircraft=" + model,
     "--fg-aircraft=" + fgmodelsdir,
@@ -144,9 +148,9 @@ baseparameters = [
     "--telnet="+str(15400+px4id),
     "--timeofday=noon",
     # socket out needs to be set to the WSL address (> wsl hostname -I)
-    "--generic=socket,out,100,172.26.48.154,"+str(15200+px4id)+",udp,FGtoPX4",
+    "--generic=socket,out,100,"+wsl_ip+","+str(15200+px4id)+",udp,FGtoPX4",
     # socket in needs to be set to the windows address within wsl ($ ip route | awk '/^default/{print $3}')
-    "--generic=socket,in,100,172.26.48.1,"+str(15300+px4id)+",udp,PX4toFG",
+    "--generic=socket,in,100,"+windows_ip+","+str(15300+px4id)+",udp,PX4toFG",
     "--model-hz=120",
     #"--disable-random-objects",
     # "--prop:/sim/rendering/texture-compression=off",

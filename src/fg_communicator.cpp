@@ -64,7 +64,8 @@ int FGCommunicator::Init(int portOffset)
 	memset((char *) &my_addr_out, 0, sizeof(my_addr_out));
 	my_addr_out.sin_family = AF_INET;
 	//  socket out needs to be set to the WSL hostname (wsl hostname -I)
-	my_addr_out.sin_addr.s_addr = inet_addr("172.26.48.154");
+	char* wsl_ip = std::getenv("PX4_WSL_IP");
+	my_addr_out.sin_addr.s_addr = inet_addr(wsl_ip);
 	// my_addr_out.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 	my_addr_out.sin_port = htons(FGOutPortBase+portOffset);
 	printf("my_addr_out = %i", FGOutPortBase + portOffset);
@@ -73,7 +74,8 @@ int FGCommunicator::Init(int portOffset)
 	memset((char *) &fg_addr_in, 0, sizeof(my_addr_out));
 	fg_addr_in.sin_family = AF_INET;
 	// socket in needs to be set to the Windows hostname within WSL (ip route | awk '/^default/{print $3}')
-	fg_addr_in.sin_addr.s_addr = inet_addr("172.26.48.1");
+	char* windows_ip = std::getenv("PX4_WINDOWS_IP");
+	fg_addr_in.sin_addr.s_addr = inet_addr(windows_ip);
 	fg_addr_in.sin_port = htons(FGInPortBase+portOffset);
 	// receiving commands on
 	printf("fg_addr_in = %i", FGInPortBase + portOffset);

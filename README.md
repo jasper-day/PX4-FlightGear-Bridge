@@ -1,6 +1,41 @@
-# FlightGear Bridge
+# Rankine Fork of Flightgear Bridge
 
-![Build Tests](https://github.com/PX4/PX4-FlightGear-Bridge/workflows/Build%20Tests/badge.svg)
+This fork allows PX4 to run in WSL while FlightGear runs in Windows, giving native performance for SITL simulation.
+
+To run PX4 on your computer, you will need to figure out the WSL hostname and the Windows IP address within WSL.
+
+First run (in Powershell)
+
+```
+wsl hostname -I
+```
+
+and note down the output - this is the IP address of WSL within windows.
+
+Then run (in WSL)
+
+```
+ip route | awk '/^default/{print $3}'
+```
+
+and note down the output - this is the IP address of Windows within WSL.
+
+Now change your environment variables (see `run_windows.fish`)
+
+```
+FG_BINARY - path to the Windows FlightGear executable within WSL
+PX4_FG_ROOT - path to the Windows FlightGear FGData repo within WSL
+FG_MODELS_DIR - path to the Windows FlightGear custom models within Windows
+PX4_FG_ROOT_WINDOWS - path to the Windows FGData within Windows
+PX4_WSL_IP - IP address of WSL
+PX4_WINDOWS_IP - IP address of Windows within WSL
+```
+
+
+
+Original documentation continues below.
+
+# FlightGear Bridge
 
 The FlightGear alternative to the current PX4's mainstream simulator Gazebo. The FlightGear expands the simulation possibilities by advanced weather simulations. 
 

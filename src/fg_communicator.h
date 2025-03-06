@@ -55,6 +55,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <poll.h>
+#include <cstdlib>
 
 
 union temp64 {
